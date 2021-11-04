@@ -22,7 +22,7 @@ export default class Camera {
       75,
       this.sizes.viewport.width / this.sizes.viewport.height,
       0.1,
-      1000
+      4000
     )
     this.container.add(this.camera)
     // Change camera aspect on resize
@@ -37,7 +37,7 @@ export default class Camera {
     // Set camera position
     this.camera.position.x = 0
     this.camera.position.y = 1
-    this.camera.position.z = 3
+    this.camera.position.z = 30
   }
   setOrbitControls() {
     // Set orbit control

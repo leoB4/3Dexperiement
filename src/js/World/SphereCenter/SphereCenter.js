@@ -9,18 +9,19 @@ export default class SphereCenter {
 		// Set options
 		this.debug = options.debug
 		this.time = options.time
+        this.click = options.click
 
-        console.log(this.frequencies);
 		// Set up
 		this.container = new Object3D()
 		this.container.name = 'SphereCenter'
 		this.params = { 
 			speed: 0.2,
             density: 1.5,
-            strength: 0.2,
-            frequency: 3.0,
+            strength: 0.1,
+            frequency: 0.3,
             amplitude: 6.0,
             intensity: 7.0,
+            speedPos: 0.35,
 		}
 
 		this.clock = new Clock()
@@ -54,8 +55,13 @@ export default class SphereCenter {
 		this.geom = new SphereBufferGeometry(0.5, 120, 120)
 
 		this.sphere = new Mesh(this.geom, this.material)
+        this.sphere.scale.set(0,0,0)
+
+        this.proxySphere = new Object3D
+        this.proxySphere.position.set(10,10,10)
 
 		this.container.add(this.sphere)
+        this.container.add(this.proxySphere)
 	}
 	setDebug() {
 		this.debugFolder = this.debug.addFolder({
@@ -130,6 +136,15 @@ export default class SphereCenter {
             this.sphere.material.uniforms.uFrequency.value = this.params.frequency;
             this.sphere.material.uniforms.uAmplitude.value = this.params.amplitude;
             this.sphere.material.uniforms.uIntensity.value = this.params.intensity;
+
+            this.sphere.position.x = Math.cos(this.clock.getElapsedTime() * this.params.speedPos) * 5
+            this.sphere.position.y = -Math.sin(this.clock.getElapsedTime() * this.params.speedPos) * 5
+            this.sphere.position.z = Math.sin(this.clock.getElapsedTime() * this.params.speedPos) * 5
+            
+            this.sphere.rotation.x = Math.cos(this.clock.getElapsedTime() * this.params.speedPos) * 5
+            this.sphere.rotation.y = -Math.sin(this.clock.getElapsedTime() * this.params.speedPos) * 5
+            this.sphere.rotation.z = Math.sin(this.clock.getElapsedTime() * this.params.speedPos) * 5
+
 		})
 
 	}

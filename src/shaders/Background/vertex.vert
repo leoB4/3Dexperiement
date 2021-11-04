@@ -1,6 +1,7 @@
 uniform float uTime;
 uniform float uPositionMultiplier;
 uniform float uDirMultiplier;
+uniform float colorMultiplier;
 
 varying float vColorMix;
 varying vec3 vColor;
@@ -19,5 +20,5 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 
   vColorMix = n;
-  vColor = palette(pos.x*0.1 + uTime*0.05, colorA, colorB, colorC, colorD);
+  vColor = palette(pos.x*0.1 + uTime*0.05, colorA, colorB, colorC, colorD, colorMultiplier);
 }

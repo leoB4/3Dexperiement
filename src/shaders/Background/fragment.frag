@@ -1,14 +1,14 @@
 varying float vColorMix;
 varying vec3 vColor;
 
-#define colorA vec3(0.6588, 0.0706, 0.6588)
+#define colorA vec3(0.5922, 0.3647, 0.8471)
 #define colorB vec3(0.0784, 0.5882, 0.5451)
 
 void main() {
-  vec3 color = vec3(0.0);
+  vec3 color = vec3(1.0,1.0,1.0);
 
-  float alpha = smoothstep(0.01, 0.01, vColorMix);
-  color = mix(colorA, vColor, alpha);
+  
+  color = mix(colorA, vColor, 0.8);
 
-  gl_FragColor = vec4(color, 1.0)*alpha;
+  gl_FragColor = vec4(color, 1.0);
 }

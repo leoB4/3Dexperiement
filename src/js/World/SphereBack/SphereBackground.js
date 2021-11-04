@@ -14,8 +14,9 @@ export default class SphereBackground {
 		this.container.name = 'SphereBack'
 		this.params = { 
 			color: 0xffffff,
-			uPositionMultiplier: 0.68,
-			uDirMultiplier: 2.4
+			uPositionMultiplier: 0.10,
+			uDirMultiplier: 2,
+			colorMultiplier: 2.50
 		}
 
 		this.clock = new Clock()
@@ -38,11 +39,12 @@ export default class SphereBackground {
 			uniforms: {
 				uTime: { value: 0 },
 				uPositionMultiplier: {value: this.params.uPositionMultiplier},
-				uDirMultiplier: {value: this.params.uDirMultiplier}
+				uDirMultiplier: {value: this.params.uDirMultiplier},
+				colorMultiplier: {value: this.params.colorMultiplier},
 			}
 		})
 
-		this.geom = new SphereBufferGeometry(6.5, 120, 60)
+		this.geom = new SphereBufferGeometry(12, 360, 360)
 
 		this.bigSphere = new Mesh(this.geom, this.material)
 
@@ -86,6 +88,9 @@ export default class SphereBackground {
 			this.bigSphere.rotation.y += 0.00025
 			this.bigSphere.rotation.z += 0.00025
 			this.bigSphere.material.uniforms.uTime.value += 0.01 
+			this.bigSphere.material.uniforms.uPositionMultiplier.value = this.params.uPositionMultiplier
+			this.bigSphere.material.uniforms.uDirMultiplier.value = this.params.uDirMultiplier
+			this.bigSphere.material.uniforms.colorMultiplier.value = this.params.colorMultiplier
 		})
 
 	}

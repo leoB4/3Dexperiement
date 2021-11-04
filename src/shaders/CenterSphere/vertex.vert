@@ -6,6 +6,7 @@ uniform float uNoiseDensity;
 uniform float uNoiseStrength;
 uniform float uFrequency;
 uniform float uAmplitude;
+uniform float colorMultiplier;
 
 varying float vColorMix;
 varying vec3 vColor;
@@ -28,5 +29,5 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 
   vColorMix = vDistort * uAmplitude;
-  vColor = palette(vColorMix + uTime*0.05, colorE, colorF, colorC, colorD);
+  vColor = palette(vColorMix + uTime*0.05, colorE, colorF, colorC, colorD, colorMultiplier);
 }

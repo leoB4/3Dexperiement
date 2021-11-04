@@ -5,8 +5,8 @@
 #define colorE vec3(0.8667, 0.651, 0.0549)
 #define colorF vec3(0.1059, 0.8039, 0.9255)
 
-vec3 palette( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ) {
-  return a + b*cos( 2.28318*(c*t+d) );
+vec3 palette( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d, in float colorMultiplier ) {
+  return a + b*cos( colorMultiplier*(c*t+d) );
 }
 
 #pragma glslify: export(palette)

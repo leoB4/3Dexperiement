@@ -10,6 +10,7 @@ export default class World {
     this.time = options.time
     this.debug = options.debug
     this.assets = options.assets
+    this.click = options.click
 
     // Set up
     this.container = new Object3D()
@@ -77,6 +78,7 @@ export default class World {
     this.sphereCenter = new SphereCenter({
       debug: this.debugFolder,
       time: this.time,
+      click: this.click
     })
     this.container.add(this.sphereCenter.container)
   }
