@@ -32,6 +32,7 @@ export default class App {
 		// Set options
 		this.canvas = options.canvas
 		this.play = options.button
+		this.tuto = options.tuto
 
 		// Set up
 		this.time = new Time()
@@ -191,12 +192,12 @@ export default class App {
 				}
 				this.vecCam.set(0,0,0).lerp(this.world.sphereCenter.sphere.position, this.camLookProgress)
 				this.camera.camera.lookAt(this.vecCam)
-				if(this.crazyActive) {
-					console.log('active');
-					this.camera.camera.rotation.x = (Math.sin((this.frequenciesSum * 0.002) * 40)) *.1
-					this.camera.camera.rotation.y = -(Math.sin((this.frequenciesSum * 0.002) * 20)) *.1
-					this.camera.camera.rotation.z = (Math.sin((this.frequenciesSum * 0.002) * 10)) *.1
-				}
+				// if(this.crazyActive) {
+				// 	console.log('active');
+				// 	this.camera.camera.rotation.x = (Math.sin((this.frequenciesSum * 0.002) * 40)) *.1
+				// 	this.camera.camera.rotation.y = -(Math.sin((this.frequenciesSum * 0.002) * 20)) *.1
+				// 	this.camera.camera.rotation.z = (Math.sin((this.frequenciesSum * 0.002) * 10)) *.1
+				// }
 			}
 		})
 
@@ -287,6 +288,7 @@ export default class App {
 				console.log('click');
 				this.loadMusic()
 				this.hasBeenClicked = true
+				this.play.style.opacity = 0
 			}, {once: true})
 		}
 	}
@@ -339,6 +341,7 @@ export default class App {
 		document.addEventListener('keydown', this.handleKeyZ.bind(this), false)
 		document.addEventListener('keydown', this.handleKeyA.bind(this), false)
 		document.addEventListener('keydown', this.handleKeyQ.bind(this), false)
+		document.addEventListener('keydown', this.handleKeyP.bind(this), false)
 	}
 
 	handleKeyE(event) {
@@ -376,6 +379,7 @@ export default class App {
 				if(this.progressCrazy >= 10) {
 					this.multiplierCrazyBack = 0.009
 					this.multiplierCrazyCenter = 0.009
+					this.music.setVolume(0.4)
 					this.crazyActive = true
 				}
 			break
@@ -388,7 +392,16 @@ export default class App {
 				this.progressCrazy = 0
 				this.multiplierCrazyBack = 0.0005
 				this.multiplierCrazyCenter = 0.00075
+				this.music.setVolume(0.1)
 				this.crazyActive = false
+			break
+		}
+	  }
+	  
+	  handleKeyP(event) {
+		switch (event.code) {
+		  case 'KeyP': // e
+			this.tuto.classList.toggle('hidden')
 			break
 		}
 	  }

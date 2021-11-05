@@ -6,6 +6,10 @@ html, body
   align-items: center
   justify-content: center
 
+*
+  font-family "Gill sans"
+  text-transform uppercase
+
 canvas
   width 100%
   height 100%
@@ -19,3 +23,55 @@ canvas
   position: fixed
   bottom: 150px
   z-index 200
+  transition: .5s ease-out
+
+button 
+  border: none
+  background-color transparent
+  color: white
+  font-family "Gill sans"
+  text-transform uppercase
+  font-size 50px
+  cursor: pointer
+
+.tuto
+  position: fixed
+  top: 20px
+  left: 20px
+  background-color #fff
+  width: 300px
+  z-index 200
+  border-radius: 8px
+  transition: .5s ease-out
+
+ul
+  list-style: none
+  display flex
+  justify-content: flex-start
+  flex-flow column
+  padding 20px
+
+li
+  display flex
+  align-items: center
+  padding 0
+  margin: 10px 0
+
+.key 
+  width: 40px
+  height: 40px
+  border 1px solid black
+  border-radius: 8px
+  position: relative
+
+span 
+  position: absolute
+  top: 50%
+  left: 50% 
+  transform: translate(-50%,-50%)
+
+.text
+  margin-left 20px
+
+.hidden 
+  opacity 0
