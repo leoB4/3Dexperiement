@@ -1,8 +1,9 @@
-import { AxesHelper, Object3D } from 'three'
+import { AxesHelper, Object3D, Vector3 } from 'three'
 
 import AmbientLightSource from './AmbientLight'
 import SphereBackground from './SphereBack/SphereBackground'
 import SphereCenter from './SphereCenter/SphereCenter'
+import Particles from './Particles/Particles'
 
 export default class World {
   constructor(options) {
@@ -23,13 +24,16 @@ export default class World {
         expanded: true
       })
     }
-
     this.setLoader()
     this.setAmbientLight()
     this.setSphereBack()
     this.setSphereCenter()
+    this.setParticles()
+    this.setParticles2()
+    this.setParticles3()
   }
   init() {
+
   }
   setLoader() {
     this.loadDiv = document.querySelector('.loadScreen')
@@ -81,5 +85,55 @@ export default class World {
       click: this.click
     })
     this.container.add(this.sphereCenter.container)
+  }
+
+  setParticles() {
+    this.particles = new Particles({
+      debug: this.debug,
+      time: this.time,
+      sampler: this.sampler,
+      dirRotaX: 1,
+      dirRotaY: 1,
+      dirRotaZ: 1,
+      radius: 6.5,
+      colA: new Vector3(0.30, 0.51, 1.0),
+      colB: new Vector3(0.28, 0.29, 0.39),
+      colC: new Vector3(1.0, 1.0, 1.0),
+      colD: new Vector3(1.0, 0.96, 0.37)
+    })
+    this.container.add(this.particles.container)
+  }
+  
+  setParticles2() {
+    this.particles2 = new Particles({
+      debug: this.debug,
+      time: this.time,
+      sampler: this.sampler,
+      dirRotaX: 1,
+      dirRotaY: -1,
+      dirRotaZ: 1,
+      radius: 6.5,
+      colA: new Vector3(0.42, 0.87, .50),
+      colB: new Vector3(0.28, 0.29, 0.39),
+      colC: new Vector3(1.0, 1.0, 1.0),
+      colD: new Vector3(1.0, 0.96, 0.37)
+    })
+    this.container.add(this.particles2.container)
+  }
+  setParticles3() {
+    this.particles3 = new Particles({
+      debug: this.debug,
+      time: this.time,
+      sampler: this.sampler,
+      dirRotaX: -1,
+      dirRotaY: -2,
+      dirRotaZ: -1,
+      radius: 6.5,
+      colA: new Vector3(0.99, 0.22, 0.39),
+      colB: new Vector3(0.28, 0.29, 0.39),
+      colC: new Vector3(1.0, 1.0, 1.0),
+      colD: new Vector3(1.0, 0.96, 0.37)
+    })
+    this.container.add(this.particles3.container)
   }
 }

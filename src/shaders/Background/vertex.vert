@@ -6,6 +6,11 @@ uniform float colorMultiplier;
 varying float vColorMix;
 varying vec3 vColor;
 
+uniform vec3 uBrightness;
+uniform vec3 uContrast;
+uniform vec3 uOscilation;
+uniform vec3 uPhase;
+
 #pragma glslify: noise = require(../modules/noise.glsl)
 #pragma glslify: palette = require(../modules/palette.glsl)
 
@@ -20,5 +25,5 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 
   vColorMix = n;
-  vColor = palette(pos.x*0.1 + uTime*0.05, colorA, colorB, colorC, colorD, colorMultiplier);
+  vColor = palette(pos.x*0.1 + uTime*0.05, uBrightness, uContrast, uOscilation, uPhase, colorMultiplier);
 }

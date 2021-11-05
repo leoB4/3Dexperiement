@@ -7,9 +7,10 @@ uniform vec3 uBrightness;
 uniform vec3 uContrast;
 uniform vec3 uOscilation;
 uniform vec3 uPhase;
+uniform float colorMultiplier;
 
 vec3 cosPalette(float t, vec3 a, vec3 b, vec3 c, vec3 d) {
-  return a + b * cos(2.28318 * (c * t + d));
+  return a + b * cos(colorMultiplier * (c * t + d));
 }     
 
 void main() {
@@ -25,6 +26,7 @@ void main() {
   // vec3 phase = vec3(0.7647, 0.8078, 0.8549);
 
   vec3 color = cosPalette(distort, brightness, contrast, oscilation, phase);
+  
   
   gl_FragColor = vec4(color, 1.0);
 }  

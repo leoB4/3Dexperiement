@@ -17,6 +17,10 @@ export default class SphereBackground {
 			uPositionMultiplier: 0.10,
 			uDirMultiplier: 2,
 			colorMultiplier: 2.50,
+			uBrightness: new Vector3(0.5176, 0.3686, 0.8667),
+			uContrast: new Vector3(0.3686, 0.6431, 0.8667),
+			uOscilation: new Vector3(1.0, 1.0, 1.0),
+			uPhase: new Vector3(0.00, 0.10, 0.20),
 		}
 
 		this.clock = new Clock()
@@ -41,6 +45,10 @@ export default class SphereBackground {
 				uPositionMultiplier: {value: this.params.uPositionMultiplier},
 				uDirMultiplier: {value: this.params.uDirMultiplier},
 				colorMultiplier: {value: this.params.colorMultiplier},
+				uBrightness: {value: this.params.uBrightness},
+				uContrast: {value: this.params.uContrast},
+				uOscilation: {value: this.params.uOscilation},
+				uPhase: {value: this.params.uPhase},
 			}
 		})
 
@@ -78,6 +86,133 @@ export default class SphereBackground {
 			.on('change', () => {
 				this.bigSphere.material.uniforms.uDirMultiplier.value = this.params.uDirMultiplier
 			  })
+			  this.debugBrightness = this.debugFolder.addFolder({
+				title: 'Brightness',
+				expanded: true
+			})
+			this.debugBrightness
+				.addInput(
+					this.params.uBrightness, 
+					'x',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uBrightness.value.x = this.params.uBrightness.x
+				  })
+			this.debugBrightness
+				.addInput(
+					this.params.uBrightness, 
+					'y',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uBrightness.value.y = this.params.uBrightness.y
+				  })
+			this.debugBrightness
+				.addInput(
+					this.params.uBrightness, 
+					'z',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uBrightness.value.z = this.params.uBrightness.z
+				  })
+			
+			this.debugContrast = this.debugFolder.addFolder({
+				title: 'Contrast',
+				expanded: true
+			})
+			this.debugContrast
+				.addInput(
+					this.params.uContrast, 
+					'x',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uContrast.value.x = this.params.uContrast.x
+				  })
+			this.debugContrast
+				.addInput(
+					this.params.uContrast, 
+					'y',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uContrast.value.y = this.params.uContrast.y
+				  })
+			this.debugContrast
+				.addInput(
+					this.params.uContrast, 
+					'z',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uContrast.value.z = this.params.uContrast.z
+				  })
+		   
+			this.debugOscilation = this.debugFolder.addFolder({
+				title: 'Oscilation',
+				expanded: true
+			})
+			this.debugOscilation
+				.addInput(
+					this.params.uOscilation, 
+					'x',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uOscilation.value.x = this.params.uOscilation.x
+				  })
+			this.debugOscilation
+				.addInput(
+					this.params.uOscilation, 
+					'y',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uOscilation.value.y = this.params.uOscilation.y
+				  })
+			this.debugOscilation
+				.addInput(
+					this.params.uOscilation, 
+					'z',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uOscilation.value.z = this.params.uOscilation.z
+				  })
+			
+				this.debugPhase = this.debugFolder.addFolder({
+				title: 'Phase',
+				expanded: true
+			})
+			this.debugPhase
+				.addInput(
+					this.params.uPhase, 
+					'x',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uPhase.value.x = this.params.uPhase.x
+				  })
+			this.debugPhase
+				.addInput(
+					this.params.uPhase, 
+					'y',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uPhase.value.y = this.params.uPhase.y
+				  })
+			this.debugPhase
+				.addInput(
+					this.params.uPhase, 
+					'z',
+					{min: 0, max: 1, step: 0.01}
+				)
+				.on('change', () => {
+					this.bigSphere.material.uniforms.uPhase.value.z = this.params.uPhase.z
+				  })
 	}
 
 	update() {
@@ -91,6 +226,7 @@ export default class SphereBackground {
 			this.bigSphere.material.uniforms.uPositionMultiplier.value = this.params.uPositionMultiplier
 			this.bigSphere.material.uniforms.uDirMultiplier.value = this.params.uDirMultiplier
 			this.bigSphere.material.uniforms.colorMultiplier.value = this.params.colorMultiplier
+			this.bigSphere.material.uniforms.uBrightness.value = this.params.uBrightness
 		})
 
 	}

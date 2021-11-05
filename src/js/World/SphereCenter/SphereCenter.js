@@ -1,4 +1,4 @@
-import { Object3D, Color, ShaderMaterial, SphereBufferGeometry, Mesh, MeshPhongMaterial, BackSide, Clock, DoubleSide, MeshNormalMaterial, Vector3, BoxBufferGeometry, CylinderBufferGeometry } from 'three'
+import { Object3D, Color, ShaderMaterial, SphereBufferGeometry, Mesh, MeshPhongMaterial, BackSide, Clock, DoubleSide, MeshNormalMaterial, Vector3, BoxBufferGeometry, CylinderBufferGeometry, SphereGeometry } from 'three'
 
 import Vert from '@shaders/CenterSphere/vertex.vert'
 import Frag from '@shaders/CenterSphere/fragment.frag'
@@ -26,6 +26,7 @@ export default class SphereCenter {
 			uContrast: new Vector3(0.5686, 0.8314, 0.5451),
 			uOscilation: new Vector3(1.0, 1.0, 1.0),
 			uPhase: new Vector3(0.7647, 0.8078, 0.8549),
+			colorMultiplier: 2.25
 		}
 
 		this.clock = new Clock()
@@ -55,12 +56,13 @@ export default class SphereCenter {
 				uContrast: {value: this.params.uContrast},
 				uOscilation: {value: this.params.uOscilation},
 				uPhase: {value: this.params.uPhase},
+				colorMultiplier: {value: this.params.colorMultiplier}
               },
 		})
 
         // this.material = new MeshNormalMaterial({})
 
-		this.geom = new SphereBufferGeometry(0.5, 120, 120)
+		this.geom = new SphereGeometry(0.5, 120, 120)
 
 		this.sphere = new Mesh(this.geom, this.material)
         this.sphere.scale.set(0,0,0)
@@ -274,6 +276,7 @@ export default class SphereCenter {
             this.sphere.material.uniforms.uAmplitude.value = this.params.amplitude;
             this.sphere.material.uniforms.uIntensity.value = this.params.intensity;
             this.sphere.material.uniforms.uBrightness.value = this.params.uBrightness;
+            this.sphere.material.uniforms.colorMultiplier.value = this.params.colorMultiplier;
 
             this.sphere.position.x = Math.cos(this.clock.getElapsedTime() * this.params.speedPos) * 5
             this.sphere.position.y = -Math.sin(this.clock.getElapsedTime() * this.params.speedPos) * 5

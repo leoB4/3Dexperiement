@@ -26,6 +26,7 @@ import RedRacer from '@sounds/redRacer.mp3'
 import Crude from '@sounds/crude.mp3'
 
 const V3 = new Vector3()
+const V3Back = new Vector3()
 export default class App {
 	constructor(options) {
 		// Set options
@@ -48,27 +49,33 @@ export default class App {
 		this.camLookProgress = 0
 		this.vecCam = new Vector3()
 		this.hasBeenClickedE = false
+		this.hasBeenClickedZ = false
 		this.hasBeenClicked = false
 
+		this.progressCrazy = 0
+		this.multiplierCrazyBack = 0.0005
+		this.multiplierCrazyCenter = 0.00075
+		this.crazyActive = false
+
 		this.brightnessB170 = new Vector3(0.8863, 0.4784, 0.4784)
-		// this.brightnessB170 = new Vector3(1, 0, 0)
-		// this.contrastB170 = new Vector3(0.5686, 0.8314, 0.5451)
-		
 		this.brightnessA170 = new Vector3(0.67, 0.78, 0.95)
-		// this.brightnessA170 = new Vector3(0, 1, 0)
-		// this.contrastA170 = new Vector3(0.87, 0.83, 0.75)
+		
+		this.brightnessBackB170 = new Vector3(0.5176, 0.3686, 0.8667)
+		this.brightnessBackA170 = new Vector3(0.77, 0.58, 0.26)
 
 		this.tgtBrightness = new Vector3()
 		this.tgtBrightness.copy(this.brightnessB170)
+		
+		this.tgtBrightnessBack = new Vector3()
+		this.tgtBrightnessBack.copy(this.brightnessBackB170)
 
 		this.brightness = new Vector3()
+		this.brightnessBack = new Vector3()
 
 		this.config = {
 			backgroundColor: new Color('#0d021f'),
 			cameraSpeed: 0,
 			cameraRadius: 8,
-			particlesSpeed: 0,
-			particlesCount: 3000,
 			bloomStrength: 1.45,
 			bloomThreshold: 0.34,
 			bloomRadius: 0.5,
@@ -79,11 +86,11 @@ export default class App {
 			afterImageValue: 0.6
 		}
 
+		this.crazyTl = new gsap.timeline({})
+
 		this.setConfig()
 		this.setRenderer()
 		this.setCamera()
-		// this.createPostprocess()
-		// this.loadMusic()
 		this.setWorld()
 		this.startExperiment()
 		this.addListener()
@@ -132,35 +139,39 @@ export default class App {
 					this.tgtFrequenciesSum = d.reduce((prev, curr) => prev + curr, 0)
 
 					this.frequenciesSum += ((this.tgtFrequenciesSum) - this.frequenciesSum) * 0.05
-					
 					this.world.sphereBack.params.uPositionMultiplier = this.frequenciesSum * 0.0001
 					this.world.sphereBack.params.uDirMultiplier = this.frequenciesSum * 0.00065
-					this.world.sphereBack.params.colorMultiplier = this.frequenciesSum * 0.0005
-
+					
 					this.world.sphereCenter.params.frequency = this.frequenciesSum * 0.00085
 					this.world.sphereCenter.params.intensity = this.frequenciesSum * 0.0009
 					this.world.sphereCenter.params.amplitude = this.frequenciesSum * 0.002
 					this.world.sphereCenter.params.strength = this.frequenciesSum * 0.0001
 					this.world.sphereCenter.sphere.scale.setScalar(this.frequenciesSum * 0.0003)
-
+					
+					this.world.sphereBack.params.colorMultiplier = this.frequenciesSum * this.multiplierCrazyBack
+					this.world.sphereCenter.params.colorMultiplier = this.frequenciesSum * this.multiplierCrazyCenter
+					
 					guess(this.audioBuffer,  this.music.context.currentTime, 1)
-						.then(({ bpm, offset, tempo }) => {
-							this.tempo = tempo
-						})
-						.catch((err) => {
-							// something went wrong
-						});
-						
+					.then(({ bpm, offset, tempo }) => {
+						this.tempo = tempo
+					})
+					.catch((err) => {
+						// something went wrong
+					});
+					
 					let easing = 0
 					if(this.tempo > 170) {
 						// console.log(this.tempo);
 						easing = .4
 						this.tgtBrightness.copy(this.brightnessA170)
+						this.tgtBrightnessBack.copy(this.brightnessBackA170)
 						this.world.sphereCenter.params.uBrightness = this.brightnessA170
-						// this.world.sphereCenter.params.uBrightness.lerp(this.brightnessA170, 0.5)
+						this.world.sphereBack.params.uBrightness = this.brightnessBackA170
+
 					}else {
 						// console.log('cool');
 						this.tgtBrightness.copy(this.brightnessB170)
+						this.tgtBrightnessBack.copy(this.brightnessBackB170)
 						easing= 0.01
 						
 					}
@@ -169,18 +180,23 @@ export default class App {
 					V3.multiplyScalar(easing)
 					this.brightness.add(V3)
 					
-					
+					V3Back.copy(this.tgtBrightnessBack)
+					V3Back.sub(this.brightnessBack)
+					V3Back.multiplyScalar(easing)
+					this.brightnessBack.add(V3Back)
+
 					this.world.sphereCenter.params.uBrightness = this.brightness
-					
-					// this.brightness.sub(this.tgtBrightness)
-					
-					// this.camera.camera.position.x = Math.sin(this.clock.getElapsedTime()*0.63)*2.7*(this.frequenciesSum * 0.0001)
-					// this.camera.camera.position.y = Math.sin(this.clock.getElapsedTime()*0.84)*2.15*(this.frequenciesSum * 0.0001)
-					// this.camera.camera.position.z = Math.cos(this.clock.getElapsedTime()*0.39)*this.config.cameraRadius*(this.frequenciesSum * 0.0001)
-					
+					this.world.sphereBack.params.uBrightness = this.brightnessBack
+
 				}
 				this.vecCam.set(0,0,0).lerp(this.world.sphereCenter.sphere.position, this.camLookProgress)
 				this.camera.camera.lookAt(this.vecCam)
+				if(this.crazyActive) {
+					console.log('active');
+					this.camera.camera.rotation.x = (Math.sin((this.frequenciesSum * 0.002) * 40)) *.1
+					this.camera.camera.rotation.y = -(Math.sin((this.frequenciesSum * 0.002) * 20)) *.1
+					this.camera.camera.rotation.z = (Math.sin((this.frequenciesSum * 0.002) * 10)) *.1
+				}
 			}
 		})
 
@@ -271,7 +287,7 @@ export default class App {
 				console.log('click');
 				this.loadMusic()
 				this.hasBeenClicked = true
-			})
+			}, {once: true})
 		}
 	}
 
@@ -320,13 +336,12 @@ export default class App {
 
 	addListener() {
 		document.addEventListener('keydown', this.handleKeyE.bind(this), false)
-		document.addEventListener('keydown', this.handleKeyF.bind(this), false)
+		document.addEventListener('keydown', this.handleKeyZ.bind(this), false)
+		document.addEventListener('keydown', this.handleKeyA.bind(this), false)
+		document.addEventListener('keydown', this.handleKeyQ.bind(this), false)
 	}
 
 	handleKeyE(event) {
-		// if(!this.playerEnteredInElmo ) {
-		//   return
-		// }
 		switch (event.code) {
 		  case 'KeyE': // e
 			if(this.hasBeenClickedE === false) {
@@ -340,20 +355,40 @@ export default class App {
 		}
 	  }
 	
-	handleKeyF(event) {
-		// if(!this.playerEnteredInElmo ) {
-		//   return
-		// }
+	handleKeyZ(event) {
 		switch (event.code) {
-		  case 'KeyF': // e
-			guess(this.audioBuffer, this.music.context.currentTime, 1)
-				.then(({ bpm, offset, tempo }) => {
-					console.log(bpm, offset, tempo);
-				})
-				.catch((err) => {
-					// something went wrong
-				});
-
+		  case 'KeyW': // e
+		  if(this.hasBeenClickedZ === false) {
+			  this.hasBeenClickedZ = true
+			  this.canvas.style.filter = `grayscale(1)`
+			}else {
+				this.hasBeenClickedZ = false
+				this.canvas.style.filter = `grayscale(0)`
+			}
+			break
+		}
+	  }
+	
+	  handleKeyA(event) {
+		switch (event.code) {
+		  case 'KeyQ': // e
+			this.progressCrazy += 0.5
+				if(this.progressCrazy >= 10) {
+					this.multiplierCrazyBack = 0.009
+					this.multiplierCrazyCenter = 0.009
+					this.crazyActive = true
+				}
+			break
+		}
+	  }
+	  
+	  handleKeyQ(event) {
+		switch (event.code) {
+		  case 'KeyZ': // e
+				this.progressCrazy = 0
+				this.multiplierCrazyBack = 0.0005
+				this.multiplierCrazyCenter = 0.00075
+				this.crazyActive = false
 			break
 		}
 	  }
