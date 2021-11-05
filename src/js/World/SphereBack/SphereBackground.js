@@ -1,4 +1,4 @@
-import { Object3D, Color, ShaderMaterial, SphereBufferGeometry, Mesh, MeshPhongMaterial, BackSide, Clock, DoubleSide } from 'three'
+import { Object3D, Color, ShaderMaterial, SphereBufferGeometry, Mesh, MeshPhongMaterial, BackSide, Clock, DoubleSide, Vector3 } from 'three'
 
 import backVert from '@shaders/Background/vertex.vert'
 import backFrag from '@shaders/Background/fragment.frag'
@@ -16,7 +16,7 @@ export default class SphereBackground {
 			color: 0xffffff,
 			uPositionMultiplier: 0.10,
 			uDirMultiplier: 2,
-			colorMultiplier: 2.50
+			colorMultiplier: 2.50,
 		}
 
 		this.clock = new Clock()

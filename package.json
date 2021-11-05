@@ -55,6 +55,7 @@
   },
   "homepage": "https://github.com/Lissandre/three_template#readme",
   "dependencies": {
-    "gsap": "^3.8.0"
+    "gsap": "^3.8.0",
+    "web-audio-beat-detector": "^8.1.21"
   }
 }

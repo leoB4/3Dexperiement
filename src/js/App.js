@@ -13,6 +13,7 @@ import { Scene,
 
 import { Pane } from 'tweakpane'
 import { gsap } from 'gsap'
+import { guess } from 'web-audio-beat-detector';
 
 import Sizes from '@tools/Sizes'
 import Time from '@tools/Time'
@@ -24,6 +25,7 @@ import World from '@world/index'
 import RedRacer from '@sounds/redRacer.mp3'
 import Crude from '@sounds/crude.mp3'
 
+const V3 = new Vector3()
 export default class App {
 	constructor(options) {
 		// Set options
@@ -35,6 +37,8 @@ export default class App {
 		this.sizes = new Sizes()
 		this.assets = new Assets()
 
+		this.clock = new Clock
+
 		this.frequencies = new Float32Array(64)
         this.targetFrequencies = new Float32Array(64)
 
@@ -43,7 +47,21 @@ export default class App {
 
 		this.camLookProgress = 0
 		this.vecCam = new Vector3()
+		this.hasBeenClickedE = false
 		this.hasBeenClicked = false
+
+		this.brightnessB170 = new Vector3(0.8863, 0.4784, 0.4784)
+		// this.brightnessB170 = new Vector3(1, 0, 0)
+		// this.contrastB170 = new Vector3(0.5686, 0.8314, 0.5451)
+		
+		this.brightnessA170 = new Vector3(0.67, 0.78, 0.95)
+		// this.brightnessA170 = new Vector3(0, 1, 0)
+		// this.contrastA170 = new Vector3(0.87, 0.83, 0.75)
+
+		this.tgtBrightness = new Vector3()
+		this.tgtBrightness.copy(this.brightnessB170)
+
+		this.brightness = new Vector3()
 
 		this.config = {
 			backgroundColor: new Color('#0d021f'),
@@ -68,6 +86,7 @@ export default class App {
 		// this.loadMusic()
 		this.setWorld()
 		this.startExperiment()
+		this.addListener()
 	}
 	setRenderer() {
 		// Set scene
@@ -124,9 +143,41 @@ export default class App {
 					this.world.sphereCenter.params.strength = this.frequenciesSum * 0.0001
 					this.world.sphereCenter.sphere.scale.setScalar(this.frequenciesSum * 0.0003)
 
+					guess(this.audioBuffer,  this.music.context.currentTime, 1)
+						.then(({ bpm, offset, tempo }) => {
+							this.tempo = tempo
+						})
+						.catch((err) => {
+							// something went wrong
+						});
+						
+					let easing = 0
+					if(this.tempo > 170) {
+						// console.log(this.tempo);
+						easing = .4
+						this.tgtBrightness.copy(this.brightnessA170)
+						this.world.sphereCenter.params.uBrightness = this.brightnessA170
+						// this.world.sphereCenter.params.uBrightness.lerp(this.brightnessA170, 0.5)
+					}else {
+						// console.log('cool');
+						this.tgtBrightness.copy(this.brightnessB170)
+						easing= 0.01
+						
+					}
+					V3.copy(this.tgtBrightness)
+					V3.sub(this.brightness)
+					V3.multiplyScalar(easing)
+					this.brightness.add(V3)
+					
+					
+					this.world.sphereCenter.params.uBrightness = this.brightness
+					
+					// this.brightness.sub(this.tgtBrightness)
+					
 					// this.camera.camera.position.x = Math.sin(this.clock.getElapsedTime()*0.63)*2.7*(this.frequenciesSum * 0.0001)
 					// this.camera.camera.position.y = Math.sin(this.clock.getElapsedTime()*0.84)*2.15*(this.frequenciesSum * 0.0001)
 					// this.camera.camera.position.z = Math.cos(this.clock.getElapsedTime()*0.39)*this.config.cameraRadius*(this.frequenciesSum * 0.0001)
+					
 				}
 				this.vecCam.set(0,0,0).lerp(this.world.sphereCenter.sphere.position, this.camLookProgress)
 				this.camera.camera.lookAt(this.vecCam)
@@ -217,6 +268,7 @@ export default class App {
 		if(this.hasBeenClicked === false) {
 
 			this.play.addEventListener('click', ()=>{
+				console.log('click');
 				this.loadMusic()
 				this.hasBeenClicked = true
 			})
@@ -237,10 +289,11 @@ export default class App {
 				const tl = new gsap.timeline({
 					onComplete: () => {
 
+						this.audioBuffer = buffer
 						this.music.setBuffer(buffer)
 						this.music.setLoop(true)
 						this.music.setVolume(0.1)
-
+						
 						this.analyser = new AudioAnalyser(this.music, 128)
 
 						gsap.delayedCall(0.05, () => this.music.play())
@@ -252,14 +305,57 @@ export default class App {
 				})
 				tl.to(this, {
 					camLookProgress: 1,
-					duration: 1
+					duration: 2.5,
+					ease: 'power4.out'
 				})
 				tl.to(this.camera.camera.position, {
 					z: this.config.camZ,
-					duration: 1
-				},'-=1')
+					duration: 2.5,
+					ease: 'power4.out'
+				},'-=2.5')
 			})
 		})
 	}
 	
+
+	addListener() {
+		document.addEventListener('keydown', this.handleKeyE.bind(this), false)
+		document.addEventListener('keydown', this.handleKeyF.bind(this), false)
+	}
+
+	handleKeyE(event) {
+		// if(!this.playerEnteredInElmo ) {
+		//   return
+		// }
+		switch (event.code) {
+		  case 'KeyE': // e
+			if(this.hasBeenClickedE === false) {
+				this.hasBeenClickedE = true
+				this.world.sphereBack.material.wireframe = true
+			}else {
+				this.hasBeenClickedE = false
+				this.world.sphereBack.material.wireframe = false
+			}
+			break
+		}
+	  }
+	
+	handleKeyF(event) {
+		// if(!this.playerEnteredInElmo ) {
+		//   return
+		// }
+		switch (event.code) {
+		  case 'KeyF': // e
+			guess(this.audioBuffer, this.music.context.currentTime, 1)
+				.then(({ bpm, offset, tempo }) => {
+					console.log(bpm, offset, tempo);
+				})
+				.catch((err) => {
+					// something went wrong
+				});
+
+			break
+		}
+	  }
+
 }
